@@ -1,0 +1,40 @@
+[package]
+name = "web-api"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+# Codex++ core crates
+codex-plus-core = { path = "../CodexPlusPlus/crates/codex-plus-core" }
+codex-plus-data = { path = "../CodexPlusPlus/crates/codex-plus-data" }
+
+# Web framework
+axum = { version = "0.8", features = ["ws", "macros"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = ["cors", "trace"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Async
+tokio = { workspace = true, features = ["net", "signal"] }
+futures-util.workspace = true
+
+# Serialization
+serde.workspace = true
+serde_json.workspace = true
+
+# HTTP client
+reqwest = { version = "0.12", features = ["json"], default-features = false }
+
+# Error handling
+anyhow.workspace = true
+thiserror.workspace = true
+
+# CLI
+clap = { version = "4", features = ["derive", "env"] }
+
+# Utilities
+uuid.workspace = true
+directories.workspace = true

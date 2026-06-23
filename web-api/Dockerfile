@@ -1,0 +1,53 @@
+# Stage 1: Build the Rust API binary
+FROM rust:1.96-slim-bookworm AS builder
+
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy workspace and core crates
+COPY Cargo.toml Cargo.lock* ./
+COPY CodexPlusPlus/crates/codex-plus-core ./CodexPlusPlus/crates/codex-plus-core
+COPY CodexPlusPlus/crates/codex-plus-data ./CodexPlusPlus/crates/codex-plus-data
+COPY web-api ./web-api
+
+# Build the API binary
+RUN cargo build -p web-api --release
+
+# Stage 2: Runtime image
+FROM debian:bookworm-slim
+
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    libssl3 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN useradd -m -u 1000 codex
+
+WORKDIR /app
+
+# Copy the binary
+COPY --from=builder /app/target/release/web-api /app/web-api
+
+# Create data directory
+RUN mkdir -p /data && chown -R codex:codex /data
+
+USER codex
+
+# Expose API port
+EXPOSE 3001
+
+# Environment variables
+ENV API_HOST=0.0.0.0
+ENV API_PORT=3001
+ENV CODEX_PLUS_DATA_DIR=/data
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:3001/api/health || exit 1
+
+ENTRYPOINT ["/app/web-api"]
