@@ -28,7 +28,7 @@ NETWORK="codex-plus"
 API_CONTAINER="api"
 WEB_CONTAINER="web"
 API_PORT="${API_PORT:-39901}"
-WEB_PORT="${WEB_PORT:-80}"
+WEB_PORT="${WEB_PORT:-39900}"
 CODEX_HOME="${CODEX_HOME:-${HOME}/.codex}"
 CODEX_STATE="${CODEX_STATE:-${HOME}/.codex-session-delete}"
 DATA_DIR="${DATA_DIR:-/tmp/codex-plus-data}"
@@ -152,7 +152,7 @@ do_install() {
         --name "${WEB_CONTAINER}" \
         --network "${NETWORK}" \
         --restart unless-stopped \
-        -p "${WEB_PORT}:80" \
+        -p "${WEB_PORT}:39900" \
         "${WEB_IMAGE}"
 
     echo ""

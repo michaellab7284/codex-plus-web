@@ -58,9 +58,9 @@ docker run -d --name api --network codex-plus --restart unless-stopped \
   -v ${HOME}/.codex-session-delete:/root/.codex-session-delete \
   ghcr.io/michaellab7284/codex-plus-web-api:latest
 
-# 3. 启动 Web 前端 (端口 80)
+# 3. 启动 Web 前端 (端口 39900)
 docker run -d --name web --network codex-plus --restart unless-stopped \
-  -p 80:80 \
+  -p 39900:39900 \
   ghcr.io/michaellab7284/codex-plus-web-web:latest
 
 # 4. 访问 http://localhost
@@ -72,7 +72,7 @@ docker run -d --name web --network codex-plus --restart unless-stopped \
 
 ```mermaid
 graph LR
-    A[浏览器] --> B[Nginx :80]
+    A[浏览器] --> B[Nginx :39900]
     B --> C[Web 前端 SPA]
     B --> D[API :39901]
     D --> E[SQLite / 文件系统]
@@ -91,7 +91,7 @@ graph LR
 | 服务 | 镜像 | 端口 | 说明 |
 |------|------|------|------|
 | **API** | `ghcr.io/.../codex-plus-web-api` | `39901` | Rust Axum REST API |
-| **Web** | `ghcr.io/.../codex-plus-web-web` | `80` | Nginx + React SPA |
+| **Web** | `ghcr.io/.../codex-plus-web-web` | `39900` | Nginx + React SPA |
 
 ---
 
@@ -204,7 +204,7 @@ sudo bash install.sh update
 ### 如何自定义端口？
 
 ```bash
-export API_PORT=39999 WEB_PORT=8080
+export API_PORT=39999 WEB_PORT=39902
 bash install.sh install
 ```
 
