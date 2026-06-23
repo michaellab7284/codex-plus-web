@@ -1,6 +1,28 @@
 use axum::{Json, http::StatusCode, response::IntoResponse};
 use serde_json::{Value, json};
 
+/// GET / - API root, returns service info
+pub async fn api_root() -> Json<Value> {
+    Json(json!({
+        "service": "codex-plus-web-api",
+        "version": env!("CARGO_PKG_VERSION"),
+        "endpoints": [
+            "GET  /api/health",
+            "GET  /api/status",
+            "GET  /api/settings",
+            "PUT  /api/settings",
+            "GET  /api/relay/profiles",
+            "POST /api/relay/profiles",
+            "GET  /api/enhancements",
+            "GET  /api/providers/presets",
+            "GET  /api/sessions",
+            "DELETE /api/sessions/{id}",
+            "GET  /api/logs",
+            "WS   /ws",
+        ]
+    }))
+}
+
 /// GET /api/health - Basic health check
 pub async fn health_check() -> Json<Value> {
     Json(json!({

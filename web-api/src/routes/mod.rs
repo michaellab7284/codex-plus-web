@@ -8,6 +8,8 @@ use super::ws;
 /// Create the main API router with all routes mounted.
 pub fn create_router(state: Arc<AppState>) -> Router {
     Router::new()
+        // API Root (so / doesn't 404)
+        .route("/", get(health::api_root))
         // Health & Status
         .route("/api/health", get(health::health_check))
         .route("/api/status", get(status::backend_status))
