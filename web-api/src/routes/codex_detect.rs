@@ -11,11 +11,18 @@ pub async fn detect_codex(State(state): State<Arc<AppState>>) -> Json<Value> {
 
     // Common Codex installation paths on various systems
     let candidates = vec![
-        PathBuf::from("/Applications/Codex.app"),           // macOS
-        PathBuf::from(std::env::var("HOME").unwrap_or_default()).join("Applications/Codex.app"), // macOS user
-        PathBuf::from("/opt/Codex"),                         // Linux
-        PathBuf::from("/usr/local/lib/Codex"),               // Linux
-        PathBuf::from("/snap/bin/codex"),                    // Snap
+        // macOS
+        PathBuf::from("/Applications/Codex.app"),
+        PathBuf::from(std::env::var("HOME").unwrap_or_default()).join("Applications/Codex.app"),
+        // Linux binary paths (check if Codex executable exists)
+        PathBuf::from("/usr/bin/codex"),
+        PathBuf::from("/usr/local/bin/codex"),
+        PathBuf::from("/snap/bin/codex"),
+        // Linux install directories
+        PathBuf::from("/opt/Codex"),
+        PathBuf::from("/usr/local/lib/Codex"),
+        // Codex home directory itself (if it exists, binary is likely installed)
+        home.clone(),
     ];
 
     let mut found = Vec::new();
