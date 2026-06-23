@@ -29,6 +29,8 @@ jobs:
 
             - name: Run Rust tests (API)
               run: cargo test -p web-api
+              env:
+                  RUSTFLAGS: ""
 
             - name: Setup Node.js
               uses: actions/setup-node@v4
