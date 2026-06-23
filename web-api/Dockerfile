@@ -39,15 +39,15 @@ RUN mkdir -p /data && chown -R codex:codex /data
 USER codex
 
 # Expose API port
-EXPOSE 3001
+EXPOSE 39901
 
 # Environment variables
 ENV API_HOST=0.0.0.0
-ENV API_PORT=3001
+ENV API_PORT=39901
 ENV CODEX_PLUS_DATA_DIR=/data
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:3001/api/health || exit 1
+    CMD curl -f http://localhost:39901/api/health || exit 1
 
 ENTRYPOINT ["/app/web-api"]
