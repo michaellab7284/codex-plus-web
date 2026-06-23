@@ -51,3 +51,4 @@ mod relay;
 mod sessions;
 mod settings;
 mod status;
+mod tests;

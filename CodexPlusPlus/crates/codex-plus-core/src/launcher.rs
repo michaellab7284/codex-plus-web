@@ -125,7 +125,7 @@ impl LaunchHandle {
     }
 }
 
-#[async_trait(?Send)]
+#[async_trait]
 pub trait LaunchHooks: Send + Sync {
     fn resolve_app_dir(
         &self,
@@ -429,7 +429,7 @@ fn helper_bind_host() -> String {
         .unwrap_or_else(|| "127.0.0.1".to_string())
 }
 
-#[async_trait(?Send)]
+#[async_trait]
 impl LaunchHooks for DefaultLaunchHooks {
     fn resolve_app_dir(
         &self,

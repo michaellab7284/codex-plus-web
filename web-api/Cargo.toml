@@ -38,3 +38,7 @@ clap = { version = "4", features = ["derive", "env"] }
 # Utilities
 uuid.workspace = true
 directories.workspace = true
+
+[dev-dependencies]
+tower = "0.5"
+axum = { version = "0.8", features = ["ws", "macros"] }
