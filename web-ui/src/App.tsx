@@ -1989,18 +1989,14 @@ export function App() {
         </div>
     );
 
-    // ── Relay sensors (stable across renders) ──
-    const relaySensors = useMemo(
-        () =>
-            useSensors(
-                useSensor(PointerSensor, {
-                    activationConstraint: { distance: 8 },
-                }),
-                useSensor(KeyboardSensor, {
-                    coordinateGetter: sortableKeyboardCoordinates,
-                }),
-            ),
-        [],
+    // ── Relay sensors (direct hook calls - NOT inside useMemo!) ──
+    const relaySensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: { distance: 8 },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        }),
     );
 
     // Initialize relayDraftProfile when entering detail view
