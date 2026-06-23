@@ -34,6 +34,8 @@ pub fn create_router(state: Arc<AppState>) -> Router {
         .route("/api/enhancements", put(enhancements::update_enhancements))
         // Provider presets
         .route("/api/providers/presets", get(presets::list_presets))
+        // Codex auto-detection
+        .route("/api/codex/detect", get(codex_detect::detect_codex))
         // Logs
         .route("/api/logs", get(health::get_logs))
         // Launch
@@ -46,6 +48,7 @@ pub fn create_router(state: Arc<AppState>) -> Router {
         .with_state(state)
 }
 
+mod codex_detect;
 mod enhancements;
 mod health;
 mod presets;
