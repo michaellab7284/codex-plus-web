@@ -8,10 +8,11 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Copy workspace and core crates
+# Copy workspace, core crates, and assets (needed for include_str! macros)
 COPY Cargo.toml Cargo.lock* ./
 COPY CodexPlusPlus/crates/codex-plus-core ./CodexPlusPlus/crates/codex-plus-core
 COPY CodexPlusPlus/crates/codex-plus-data ./CodexPlusPlus/crates/codex-plus-data
+COPY CodexPlusPlus/assets ./CodexPlusPlus/assets
 COPY web-api ./web-api
 
 # Build the API binary
