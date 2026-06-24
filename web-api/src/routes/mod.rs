@@ -43,6 +43,9 @@ pub fn create_router(state: Arc<AppState>) -> Router {
         .route("/api/restart", post(status::restart_codex))
         // WebSocket
         .route("/ws", get(ws::ws_handler))
+        // Protocol proxy (Responses API ↔ Chat Completions)
+        .route("/api/proxy/v1/models", get(proxy::proxy_models))
+        .route("/api/proxy/v1/responses", post(proxy::proxy_responses))
         // Fallback for unknown routes
         .fallback(health::not_found)
         .with_state(state)
@@ -52,6 +55,7 @@ mod codex_detect;
 mod enhancements;
 mod health;
 mod presets;
+mod proxy;
 mod relay;
 mod sessions;
 mod settings;
