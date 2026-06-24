@@ -102,7 +102,7 @@ pub async fn proxy_responses(
                         "object": "response",
                         "status": "completed",
                         "model": model,
-                        "output": [{"type": "message", "role": "assistant", "content": [{"type": "output_text", "text": response_text}]}]
+                        "output": [{"type": "text", "text": response_text}]
                     });
                     (status, Json(responses_resp))
                 }
