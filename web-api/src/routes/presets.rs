@@ -1,5 +1,4 @@
 use axum::Json;
-use axum::http::StatusCode;
 use serde_json::{Value, json};
 
 /// GET /api/providers/presets - List all provider presets

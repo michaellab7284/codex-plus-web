@@ -21,6 +21,7 @@ pub struct AppState {
     /// Settings file path
     pub settings_path: PathBuf,
     /// Application data directory
+    #[allow(dead_code)]
     pub data_dir: PathBuf,
 }
 

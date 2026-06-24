@@ -27,7 +27,7 @@ pub async fn update_settings(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<Value>,
 ) -> Json<Value> {
-    let mut store = state.settings_store.lock().await;
+    let store = state.settings_store.lock().await;
 
     match store.update(payload) {
         Ok(updated_settings) => Json(json!({

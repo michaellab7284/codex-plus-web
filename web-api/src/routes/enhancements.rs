@@ -39,7 +39,7 @@ pub async fn update_enhancements(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<Value>,
 ) -> Json<Value> {
-    let mut store = state.settings_store.lock().await;
+    let store = state.settings_store.lock().await;
 
     match store.update(payload) {
         Ok(updated) => Json(json!({

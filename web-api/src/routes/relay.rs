@@ -40,7 +40,7 @@ pub async fn create_profile(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<Value>,
 ) -> Json<Value> {
-    let mut store = state.settings_store.lock().await;
+    let store = state.settings_store.lock().await;
     let mut settings = store.load().unwrap_or_default();
 
     // Build a new profile from the payload
@@ -116,7 +116,7 @@ pub async fn update_profile(
     Path(id): Path<String>,
     Json(payload): Json<Value>,
 ) -> Json<Value> {
-    let mut store = state.settings_store.lock().await;
+    let store = state.settings_store.lock().await;
     let mut settings = store.load().unwrap_or_default();
 
     if let Some(profile) = settings.relay_profiles.iter_mut().find(|p| p.id == id) {
@@ -143,7 +143,7 @@ pub async fn delete_profile(
     State(state): State<Arc<AppState>>,
     Path(id): Path<String>,
 ) -> Json<Value> {
-    let mut store = state.settings_store.lock().await;
+    let store = state.settings_store.lock().await;
     let mut settings = store.load().unwrap_or_default();
 
     let initial_len = settings.relay_profiles.len();
