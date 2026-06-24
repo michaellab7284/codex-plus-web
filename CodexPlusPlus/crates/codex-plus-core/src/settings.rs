@@ -43,15 +43,14 @@ impl Default for RelayContextSelection {
 pub struct RelayProfile {
     pub id: String,
     pub name: String,
-    #[serde(default, skip_serializing)]
+    #[serde(default)]
     pub model: String,
-    #[serde(default = "default_relay_base_url", skip_serializing)]
+    #[serde(default = "default_relay_base_url")]
     pub base_url: String,
     #[serde(rename = "upstreamBaseUrl", default)]
     pub upstream_base_url: String,
     #[serde(
         default,
-        skip_serializing,
         deserialize_with = "deserialize_profile_api_key"
     )]
     pub api_key: String,
