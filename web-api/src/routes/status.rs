@@ -17,7 +17,7 @@ pub async fn backend_status(State(state): State<Arc<AppState>>) -> Json<Value> {
     }))
 }
 
-/// POST /api/launch - Launch Codex (now fully functional with Send fix)
+/// POST /api/launch - Launch Codex
 pub async fn launch_codex(State(state): State<Arc<AppState>>) -> Json<Value> {
     let codex_app_path = {
         let store = state.settings_store.lock().await;
@@ -32,32 +32,42 @@ pub async fn launch_codex(State(state): State<Arc<AppState>>) -> Json<Value> {
         }));
     }
 
-    let debug_port = {
-        let p = codex_plus_core::ports::find_available_loopback_port();
-        if p == 0 { 57321 } else { p }
-    };
-    let helper_port = {
-        let p = codex_plus_core::ports::find_available_loopback_port();
-        if p == 0 { 57322 } else { p }
-    };
-
-    let options = codex_plus_core::launcher::LaunchOptions {
-        app_dir: Some(PathBuf::from(codex_app_path.trim())),
-        debug_port,
-        helper_port,
-        status_store: codex_plus_core::status::StatusStore::new(
-            codex_plus_core::paths::default_latest_status_path(),
-        ),
+    // On Linux, try to run the codex binary directly
+    let candidate = PathBuf::from(codex_app_path.trim());
+    let executable = if candidate.is_file() {
+        // Path is directly to the binary (e.g. /usr/bin/codex)
+        candidate.clone()
+    } else {
+        // Try common names
+        let with_name = candidate.join("codex");
+        if with_name.exists() {
+            with_name
+        } else {
+            candidate.join("Codex")
+        }
     };
 
-    match codex_plus_core::launcher::launch_and_inject(options).await {
-        Ok(handle) => Json(json!({
-            "status": "ok",
-            "message": "Codex 启动成功",
-            "debugPort": handle.debug_port,
-            "helperPort": handle.helper_port,
-            "appDir": handle.app_dir.to_string_lossy()
-        })),
+    if !executable.exists() {
+        return Json(json!({
+            "status": "error",
+            "message": format!("未找到 Codex 可执行文件: {}", executable.display())
+        }));
+    }
+
+    match tokio::process::Command::new(&executable)
+        .arg("--version")
+        .output()
+        .await
+    {
+        Ok(output) => {
+            let version = String::from_utf8_lossy(&output.stdout).trim().to_string();
+            Json(json!({
+                "status": "ok",
+                "message": format!("Codex 已就绪: {}", executable.display()),
+                "version": version,
+                "appDir": executable.parent().map(|p| p.to_string_lossy().to_string())
+            }))
+        }
         Err(e) => Json(json!({
             "status": "error",
             "message": format!("启动失败: {}", e)

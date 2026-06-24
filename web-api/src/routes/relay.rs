@@ -256,7 +256,7 @@ pub async fn test_profile(Json(payload): Json<Value>) -> Json<Value> {
             let preview = text.chars().take(500).collect::<String>();
 
             Json(json!({
-                "status": if http_status < 500 { "ok" } else { "error" },
+                "status": if http_status < 300 { "ok" } else { "error" },
                 "httpStatus": http_status,
                 "endpoint": test_endpoint,
                 "responsePreview": preview
