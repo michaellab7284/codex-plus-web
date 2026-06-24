@@ -27,18 +27,13 @@ RUN apt-get update && apt-get install -y \
     libssl3 \
     && rm -rf /var/lib/apt/lists/*
 
-# Create non-root user
-RUN useradd -m -u 1000 codex
-
 WORKDIR /app
 
 # Copy the binary
 COPY --from=builder /app/target/release/web-api /app/web-api
 
 # Create data directory
-RUN mkdir -p /data && chown -R codex:codex /data
-
-USER codex
+RUN mkdir -p /data
 
 # Expose API port
 EXPOSE 39901
@@ -47,6 +42,8 @@ EXPOSE 39901
 ENV API_HOST=0.0.0.0
 ENV API_PORT=39901
 ENV CODEX_PLUS_DATA_DIR=/data
+# Match Codex config mount point (install.sh mounts host ~/.codex to /root/.codex)
+ENV CODEX_HOME=/root/.codex
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \

@@ -57,6 +57,7 @@ do_install() {
         -p "${API_PORT}:39901" \
         -e API_HOST=0.0.0.0 -e API_PORT=39901 -e CODEX_PLUS_DATA_DIR=/data \
         -e RUST_LOG="${RUST_LOG:-info}" \
+        -e CODEX_HOME=/root/.codex \
         -v "${CODEX_HOME}:/root/.codex" -v "${CODEX_STATE}:/root/.codex-session-delete" -v "${DATA_DIR}:/data" \
         ${CODEX_MOUNT} \
         "${API_IMAGE}"
