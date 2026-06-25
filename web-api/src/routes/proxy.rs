@@ -58,7 +58,8 @@ pub async fn proxy_responses(
     }
 
     // Translate Responses API → Chat Completions
-    let model = body.get("model").and_then(|v| v.as_str()).unwrap_or("deepseek-v4-flash");
+    // Always use deepseek-v4-flash - override any model Codex sends
+    let model = "deepseek-v4-flash";
     let instructions = body.get("instructions").and_then(|v| v.as_str()).unwrap_or("");
 
     // Extract text from input (handles both string and array formats)
