@@ -59,12 +59,20 @@ pub async fn proxy_responses(
 
     // Translate Responses API → Chat Completions
     let model = body.get("model").and_then(|v| v.as_str()).unwrap_or("deepseek-v4-flash");
-    let input = body.get("input").and_then(|v| v.as_str()).unwrap_or("");
     let instructions = body.get("instructions").and_then(|v| v.as_str()).unwrap_or("");
 
+    // Extract text from input (handles both string and array formats)
+    let input_text = extract_input_text(body.get("input"));
+
     let mut messages = vec![];
-    if !input.is_empty() {
-        messages.push(json!({"role": "user", "content": input}));
+    if !instructions.is_empty() {
+        messages.push(json!({"role": "system", "content": instructions}));
+    }
+    if !input_text.is_empty() {
+        messages.push(json!({"role": "user", "content": input_text}));
+    }
+    if messages.is_empty() {
+        messages.push(json!({"role": "user", "content": "Hello"}));
     }
 
     let chat_body = json!({
@@ -136,4 +144,42 @@ fn relay_api_key(profile: &codex_plus_core::settings::RelayProfile) -> String {
         }
     }
     profile.api_key.trim().to_string()
+}
+
+fn extract_input_text(input: Option<&Value>) -> String {
+    let Some(input) = input else { return String::new() };
+    match input {
+        Value::String(s) => s.clone(),
+        Value::Array(arr) => {
+            let mut texts = Vec::new();
+            for item in arr {
+                let item_type = item.get("type").and_then(|v| v.as_str()).unwrap_or("");
+                match item_type {
+                    "input_text" | "text" => {
+                        if let Some(t) = item.get("text").and_then(|v| v.as_str()) {
+                            texts.push(t.to_string());
+                        }
+                    }
+                    "message" => {
+                        if let Some(content) = item.get("content") {
+                            match content {
+                                Value::Array(content_arr) => {
+                                    for c in content_arr {
+                                        if let Some(t) = c.get("text").and_then(|v| v.as_str()) {
+                                            texts.push(t.to_string());
+                                        }
+                                    }
+                                }
+                                Value::String(s) => texts.push(s.clone()),
+                                _ => {}
+                            }
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            texts.join("\n")
+        }
+        _ => String::new(),
+    }
 }
